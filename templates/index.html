@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - My Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to My Site</h2>
+        <ul>
+            <li><a href="{% url 'upload' %}">Upload Data</a></li>
+            <li><a href="{% url 'circle_user_list' %}">Circle Users List</a></li>
+            <li><a href="{% url 'extract_hotmart_data' %}">Extract Hotmart Data</a></li>
+            <li><a href="{% url 'list_hotmart_users' %}">List Hotmart Users</a></li>
+            <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+        </ul>
+    </div>
+</body>
+</html>

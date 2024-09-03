@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Hotmart Subscriptions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .status-info {
+            margin-bottom: 30px;
+        }
+        .status-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .status-info th, .status-info td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .status-info th {
+            background-color: #f9f9f9;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .back-link a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Extract Hotmart Subscriptions</h2>
+        
+        <div class="status-info">
+            <h3>Subscription Status Definitions</h3>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Definition</th>
+                </tr>
+                <tr>
+                    <td>Active</td>
+                    <td>The payment of the last recurrence is on time and the subscription is still in the duration period.</td>
+                </tr>
+                <tr>
+                    <td>Overdue</td>
+                    <td>Your customer's payment of the last recurrence is overdue and the subscription is still in the duration period.</td>
+                </tr>
+                <tr>
+                    <td>Canceled by Administrator</td>
+                    <td>The subscription was canceled by Hotmart's Customer Support Team.</td>
+                </tr>
+                <tr>
+                    <td>Canceled by Customer</td>
+                    <td>The cancellation of the subscription was made by the Buyer.</td>
+                </tr>
+                <tr>
+                    <td>Canceled by Seller</td>
+                    <td>The cancellation of the subscription was made by you, the Producer, or your collaborator.</td>
+                </tr>
+                <tr>
+                    <td>Inactive</td>
+                    <td>The first recurrence payment has not been confirmed/approved.</td>
+                </tr>
+                <tr>
+                    <td>Initiated</td>
+                    <td>Your student has generated a Boleto (Brazil) for the payment of the subscription's first recurrence, but it has not been confirmed yet.</td>
+                </tr>
+                <tr>
+                    <td>Expired</td>
+                    <td>The subscription period has ended. The recurrences charged in this period may have been settled or there may be one or more overdue.</td>
+                </tr>
+            </table>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                {{ form.statuses.label_tag }}
+                {{ form.statuses }}
+            </div>
+            <button type="submit">Extract Data</button>
+        </form>
+        <div class="back-link">
+            <a href="{% url 'home' %}">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

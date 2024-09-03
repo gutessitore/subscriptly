@@ -22,7 +22,7 @@ class CircleUser(models.Model):
     num_posts = models.IntegerField(default=0)
     num_comments = models.IntegerField(default=0)
     num_likes_received = models.IntegerField(default=0)
-    image_url = models.URLField(max_length=200, null=True, blank=True)
+    image_url = models.URLField(max_length=1000, null=True, blank=True)
     last_active = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     def __str__(self):
@@ -34,28 +34,28 @@ class CircleUser(models.Model):
 
 
 class HotmartSubscription(models.Model):
-    subscription_id = models.CharField(max_length=50, unique=True)
-    user_id = models.CharField(max_length=20)
-    status = models.CharField(max_length=20)
-    creation_date = models.DateTimeField()
-    last_update = models.DateTimeField()
-    canceled = models.BooleanField(default=False)
+    subscriber_code = models.CharField(max_length=100)
+    subscription_id = models.BigIntegerField()
+    status = models.CharField(max_length=50)
+    accession_date = models.DateTimeField()
+    request_date = models.DateTimeField()
+    trial = models.BooleanField(default=False)
     plan_name = models.CharField(max_length=255)
-    plan_id = models.IntegerField()
+    plan_id = models.BigIntegerField()
     recurrency_period = models.IntegerField()
     product_name = models.CharField(max_length=255)
-    product_id = models.IntegerField()
-    product_ucode = models.CharField(max_length=50)
-    currency_code = models.CharField(max_length=10)
-    amount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    product_id = models.BigIntegerField()
+    product_ucode = models.CharField(max_length=100)
+    price_currency_code = models.CharField(max_length=10)
+    price_value = models.DecimalField(max_digits=10, decimal_places=2)
     subscriber_name = models.CharField(max_length=255)
-    subscriber_ucode = models.CharField(max_length=50)
+    subscriber_ucode = models.CharField(max_length=100)
     subscriber_email = models.EmailField()
-    next_billing_date = models.DateTimeField()
-    reference_code = models.CharField(max_length=50, null=True, blank=True)
+    date_next_charge = models.DateTimeField()
+    transaction = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Subscription {self.subscription_id} - {self.status}"
+        return f"{self.subscriber_name} - {self.product_name}"
 
     class Meta:
         verbose_name = "Hotmart Subscription"

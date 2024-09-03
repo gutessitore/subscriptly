@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 50%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        caption {
+            caption-side: top;
+            text-align: left;
+            padding: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap; /* Impede que as datas quebrem linha */
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .back-link a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        img {
+            border-radius: 50%;
+        }
+        .bio-cell {
+            max-width: 200px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Registered Circle Users</h2>
+
+        <!-- Barra de Busca -->
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search for users...">
+        </div>
+
+        <div class="table-container">
+            <table id="circleUserTable">
+                <caption>List of all registered Circle Users and their details</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">User ID</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Member Since</th>
+                        <th scope="col">Active Status</th>
+                        <th scope="col">Tags</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Headline</th>
+                        <th scope="col">Bio</th>
+                        <th scope="col">Profile URL</th>
+                        <th scope="col">Website</th>
+                        <th scope="col">Twitter</th>
+                        <th scope="col">Facebook</th>
+                        <th scope="col">LinkedIn</th>
+                        <th scope="col">Instagram</th>
+                        <th scope="col">Number of Posts</th>
+                        <th scope="col">Number of Comments</th>
+                        <th scope="col">Number of Likes Received</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Last Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.user_id }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.member_since|date:"Y-m-d H:i" }}</td>
+                        <td>{{ user.active_status }}</td>
+                        <td>{{ user.tags|join:", " }}</td>
+                        <td>{{ user.location }}</td>
+                        <td>{{ user.headline }}</td>
+                        <td class="bio-cell">
+                            <span title="{{ user.bio }}">{{ user.bio|truncatechars:100 }}</span>
+                        </td>
+                        <td><a href="{{ user.profile_url }}" target="_blank" aria-label="Profile URL">Profile</a></td>
+                        <td><a href="{{ user.website }}" target="_blank" aria-label="Website">Website</a></td>
+                        <td><a href="{{ user.twitter_url }}" target="_blank" aria-label="Twitter URL">Twitter</a></td>
+                        <td><a href="{{ user.facebook_url }}" target="_blank" aria-label="Facebook URL">Facebook</a></td>
+                        <td><a href="{{ user.linkedin_url }}" target="_blank" aria-label="LinkedIn URL">LinkedIn</a></td>
+                        <td><a href="{{ user.instagram_url }}" target="_blank" aria-label="Instagram URL">Instagram</a></td>
+                        <td>{{ user.num_posts }}</td>
+                        <td>{{ user.num_comments }}</td>
+                        <td>{{ user.num_likes_received }}</td>
+                        <td><img src="{{ user.image_url }}" alt="User Image" width="50" height="50"></td>
+                        <td>{{ user.last_active|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="21" style="text-align: center;">No users found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="back-link">
+            <a href="{% url 'home' %}">Back to Home</a>
+        </div>
+    </div>
+
+<script>
+    function filterTable() {
+        var input, filter, table, tr, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toLowerCase();
+        table = document.getElementById("circleUserTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {  // Começa em 1 para ignorar o cabeçalho
+            txtValue = tr[i].textContent || tr[i].innerText;
+            if (txtValue.toLowerCase().includes(filter)) {
+                tr[i].style.display = "";  // Mostra a linha se encontrar o texto
+            } else {
+                tr[i].style.display = "none"; // Esconde a linha se não encontrar o texto
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
