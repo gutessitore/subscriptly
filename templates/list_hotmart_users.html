@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotmart Subscriptions</title>
+    <title>Assinaturas Hotmart</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,30 +69,30 @@
 </head>
 <body>
     <div class="container">
-        <h2>Hotmart Subscriptions</h2>
+        <h2>Assinaturas Hotmart</h2>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Subscriber Code</th>
-                        <th>Subscription ID</th>
+                        <th>Código do Assinante</th>
+                        <th>ID da Assinatura</th>
                         <th>Status</th>
-                        <th>Accession Date</th>
-                        <th>Request Date</th>
-                        <th>Trial</th>
-                        <th>Plan Name</th>
-                        <th>Plan ID</th>
-                        <th>Recurrency Period</th>
-                        <th>Product Name</th>
-                        <th>Product ID</th>
-                        <th>Product Ucode</th>
-                        <th>Price Currency</th>
-                        <th>Price Value</th>
-                        <th>Subscriber Name</th>
-                        <th>Subscriber Ucode</th>
-                        <th>Subscriber Email</th>
-                        <th>Date Next Charge</th>
-                        <th>Transaction</th>
+                        <th>Data de Adesão</th>
+                        <th>Data de Solicitação</th>
+                        <th>Teste</th>
+                        <th>Nome do Plano</th>
+                        <th>ID do Plano</th>
+                        <th>Período de Recorrência</th>
+                        <th>Nome do Produto</th>
+                        <th>ID do Produto</th>
+                        <th>Ucode do Produto</th>
+                        <th>Moeda</th>
+                        <th>Valor</th>
+                        <th>Nome do Assinante</th>
+                        <th>Ucode do Assinante</th>
+                        <th>Email do Assinante</th>
+                        <th>Data da Próxima Cobrança</th>
+                        <th>Transação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,7 +103,7 @@
                         <td>{{ subscription.status }}</td>
                         <td>{{ subscription.accession_date|date:"Y-m-d H:i" }}</td>
                         <td>{{ subscription.request_date|date:"Y-m-d H:i" }}</td>
-                        <td>{{ subscription.trial|yesno:"Yes,No" }}</td>
+                        <td>{{ subscription.trial|yesno:"Sim,Não" }}</td>
                         <td>{{ subscription.plan_name }}</td>
                         <td>{{ subscription.plan_id }}</td>
                         <td>{{ subscription.recurrency_period }}</td>
@@ -120,14 +120,14 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="19" style="text-align: center;">No subscriptions found.</td>
+                        <td colspan="19" style="text-align: center;">Nenhuma assinatura encontrada.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         <div class="back-link">
-            <a href="{% url 'home' %}">Back to Home</a>
+            <a href="{% url 'home' %}">Voltar para Início</a>
         </div>
     </div>
 </body>

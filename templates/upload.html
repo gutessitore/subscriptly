@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload de Dados</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,39 +16,78 @@
             height: 100vh;
         }
         .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
             width: 100%;
             text-align: center;
         }
         h2 {
             color: #333;
             margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
         form {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
         }
-        input[type="file"] {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #555;
+            text-align: left;
+        }
+        select, input[type="file"] {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            font-size: 16px;
+            color: #495057;
             width: 100%;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        select:focus, input[type="file"]:focus {
+            border-color: #80bdff;
+            outline: none;
+        }
+        #file-upload {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        #file-upload.dragging {
+            border-color: #007bff;
+            color: #007bff;
+        }
+        #file-upload p {
+            margin: 0;
+            font-size: 16px;
+        }
+        input[type="file"] {
+            display: none;
         }
         button {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
             transition: background-color 0.3s ease;
+            width: 100%;
         }
         button:hover {
             background-color: #0056b3;
@@ -64,7 +103,18 @@
         <h2>Upload de Dados</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div>
+                <label for="model_choice">Escolha do modelo:</label>
+                <select id="model_choice" name="model_choice">
+                    <option value="circle_users">Circle</option>
+                    <option value="hotmart_subscriptions">Hotmart</option>
+                    <!-- Adicione outras opções conforme necessário -->
+                </select>
+            </div>
+            <div id="file-upload">
+                <input type="file" id="file" name="file">
+                <p>Arraste e solte o arquivo aqui ou clique para selecionar</p>
+            </div>
             <button type="submit">Upload</button>
         </form>
         {% if messages %}
@@ -75,5 +125,38 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+        const fileUpload = document.getElementById('file-upload');
+        const fileInput = document.getElementById('file');
+
+        fileUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragging');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragging');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragging');
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileUpload.querySelector('p').textContent = fileInput.files[0].name;
+            }
+        });
+    </script>
 </body>
 </html>

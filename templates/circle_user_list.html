@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle Users</title>
+    <title>Usuários Circle</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -99,39 +99,39 @@
 </head>
 <body>
     <div class="container">
-        <h2>Registered Circle Users</h2>
+        <h2>Usuários Circle Registrados</h2>
 
         <!-- Barra de Busca -->
         <div class="search-container">
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search for users...">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Buscar usuários...">
         </div>
 
         <div class="table-container">
             <table id="circleUserTable">
-                <caption>List of all registered Circle Users and their details</caption>
+                <caption>Lista de todos os Usuários Circle registrados e seus detalhes</caption>
                 <thead>
                     <tr>
-                        <th scope="col">User ID</th>
-                        <th scope="col">First Name</th>
-                        <th scope="col">Last Name</th>
+                        <th scope="col">ID do Usuário</th>
+                        <th scope="col">Primeiro Nome</th>
+                        <th scope="col">Último Nome</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Member Since</th>
-                        <th scope="col">Active Status</th>
+                        <th scope="col">Membro Desde</th>
+                        <th scope="col">Status Ativo</th>
                         <th scope="col">Tags</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Headline</th>
-                        <th scope="col">Bio</th>
-                        <th scope="col">Profile URL</th>
+                        <th scope="col">Localização</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Biografia</th>
+                        <th scope="col">URL do Perfil</th>
                         <th scope="col">Website</th>
                         <th scope="col">Twitter</th>
                         <th scope="col">Facebook</th>
                         <th scope="col">LinkedIn</th>
                         <th scope="col">Instagram</th>
-                        <th scope="col">Number of Posts</th>
-                        <th scope="col">Number of Comments</th>
-                        <th scope="col">Number of Likes Received</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Last Active</th>
+                        <th scope="col">Número de Postagens</th>
+                        <th scope="col">Número de Comentários</th>
+                        <th scope="col">Número de Curtidas Recebidas</th>
+                        <th scope="col">Imagem</th>
+                        <th scope="col">Última Atividade</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,28 +149,28 @@
                         <td class="bio-cell">
                             <span title="{{ user.bio }}">{{ user.bio|truncatechars:100 }}</span>
                         </td>
-                        <td><a href="{{ user.profile_url }}" target="_blank" aria-label="Profile URL">Profile</a></td>
+                        <td><a href="{{ user.profile_url }}" target="_blank" aria-label="URL do Perfil">Perfil</a></td>
                         <td><a href="{{ user.website }}" target="_blank" aria-label="Website">Website</a></td>
-                        <td><a href="{{ user.twitter_url }}" target="_blank" aria-label="Twitter URL">Twitter</a></td>
-                        <td><a href="{{ user.facebook_url }}" target="_blank" aria-label="Facebook URL">Facebook</a></td>
-                        <td><a href="{{ user.linkedin_url }}" target="_blank" aria-label="LinkedIn URL">LinkedIn</a></td>
-                        <td><a href="{{ user.instagram_url }}" target="_blank" aria-label="Instagram URL">Instagram</a></td>
+                        <td><a href="{{ user.twitter_url }}" target="_blank" aria-label="URL do Twitter">Twitter</a></td>
+                        <td><a href="{{ user.facebook_url }}" target="_blank" aria-label="URL do Facebook">Facebook</a></td>
+                        <td><a href="{{ user.linkedin_url }}" target="_blank" aria-label="URL do LinkedIn">LinkedIn</a></td>
+                        <td><a href="{{ user.instagram_url }}" target="_blank" aria-label="URL do Instagram">Instagram</a></td>
                         <td>{{ user.num_posts }}</td>
                         <td>{{ user.num_comments }}</td>
                         <td>{{ user.num_likes_received }}</td>
-                        <td><img src="{{ user.image_url }}" alt="User Image" width="50" height="50"></td>
+                        <td><img src="{{ user.image_url }}" alt="Imagem do Usuário" width="50" height="50"></td>
                         <td>{{ user.last_active|date:"Y-m-d H:i" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="21" style="text-align: center;">No users found.</td>
+                        <td colspan="21" style="text-align: center;">Nenhum usuário encontrado.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         <div class="back-link">
-            <a href="{% url 'home' %}">Back to Home</a>
+            <a href="{% url 'home' %}">Voltar para Início</a>
         </div>
     </div>
 

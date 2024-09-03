@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extract Hotmart Subscriptions</title>
+    <title>Extrair Assinaturas Hotmart</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -87,46 +87,46 @@
 </head>
 <body>
     <div class="container">
-        <h2>Extract Hotmart Subscriptions</h2>
+        <h2>Extrair Assinaturas Hotmart</h2>
         
         <div class="status-info">
-            <h3>Subscription Status Definitions</h3>
+            <h3>Definições de Status de Assinatura</h3>
             <table>
                 <tr>
                     <th>Status</th>
-                    <th>Definition</th>
+                    <th>Definição</th>
                 </tr>
                 <tr>
-                    <td>Active</td>
-                    <td>The payment of the last recurrence is on time and the subscription is still in the duration period.</td>
+                    <td>Ativo</td>
+                    <td>O pagamento da última recorrência está em dia e a assinatura ainda está no período de duração.</td>
                 </tr>
                 <tr>
-                    <td>Overdue</td>
-                    <td>Your customer's payment of the last recurrence is overdue and the subscription is still in the duration period.</td>
+                    <td>Atrasado</td>
+                    <td>O pagamento da última recorrência do seu cliente está atrasado e a assinatura ainda está no período de duração.</td>
                 </tr>
                 <tr>
-                    <td>Canceled by Administrator</td>
-                    <td>The subscription was canceled by Hotmart's Customer Support Team.</td>
+                    <td>Cancelado pelo Administrador</td>
+                    <td>A assinatura foi cancelada pela equipe de suporte ao cliente da Hotmart.</td>
                 </tr>
                 <tr>
-                    <td>Canceled by Customer</td>
-                    <td>The cancellation of the subscription was made by the Buyer.</td>
+                    <td>Cancelado pelo Cliente</td>
+                    <td>O cancelamento da assinatura foi feito pelo Comprador.</td>
                 </tr>
                 <tr>
-                    <td>Canceled by Seller</td>
-                    <td>The cancellation of the subscription was made by you, the Producer, or your collaborator.</td>
+                    <td>Cancelado pelo Vendedor</td>
+                    <td>O cancelamento da assinatura foi feito por você, o Produtor, ou seu colaborador.</td>
                 </tr>
                 <tr>
-                    <td>Inactive</td>
-                    <td>The first recurrence payment has not been confirmed/approved.</td>
+                    <td>Inativo</td>
+                    <td>O pagamento da primeira recorrência não foi confirmado/aprovado.</td>
                 </tr>
                 <tr>
-                    <td>Initiated</td>
-                    <td>Your student has generated a Boleto (Brazil) for the payment of the subscription's first recurrence, but it has not been confirmed yet.</td>
+                    <td>Iniciado</td>
+                    <td>Seu aluno gerou um Boleto (Brasil) para o pagamento da primeira recorrência da assinatura, mas ainda não foi confirmado.</td>
                 </tr>
                 <tr>
-                    <td>Expired</td>
-                    <td>The subscription period has ended. The recurrences charged in this period may have been settled or there may be one or more overdue.</td>
+                    <td>Expirado</td>
+                    <td>O período de assinatura terminou. As recorrências cobradas neste período podem ter sido quitadas ou pode haver uma ou mais pendentes.</td>
                 </tr>
             </table>
         </div>
@@ -138,10 +138,10 @@
                 {{ form.statuses.label_tag }}
                 {{ form.statuses }}
             </div>
-            <button type="submit">Extract Data</button>
+            <button type="submit">Extrair Dados</button>
         </form>
         <div class="back-link">
-            <a href="{% url 'home' %}">Back to Home</a>
+            <a href="{% url 'home' %}">Voltar para Início</a>
         </div>
     </div>
 </body>
