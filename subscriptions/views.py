@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from datetime import datetime, timedelta
+
 from django.shortcuts import render
 
 from subscriptions.form_upload.upload_file import upload_file
@@ -74,9 +75,18 @@ def compare_users_view(request):
     for user in circle_users:
         all_tags.update(user.tags)
 
+    accession_date = int((datetime.now() - timedelta(days=365 * 5)).timestamp() * 1000)
+    end_accession_date = int(datetime.now().timestamp() * 1000)
+    status = 'ACTIVE'
+
     context = {
         'circle_users': circle_users,
-        'unique_tags': sorted(all_tags)
+        'unique_tags': sorted(all_tags),
+        'hotmart_url_data': {
+            'accession_date': accession_date,
+            'end_accession_date': end_accession_date,
+            'status': status
+        }
     }
 
     return render(request, 'compare_users.html', context)

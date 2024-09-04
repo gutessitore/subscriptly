@@ -106,17 +106,7 @@
 <body>
 
     <h2>Usuários Circle que Não Estão no Hotmart ({{ circle_users|length }})</h2>
-
-    <!-- Seção de filtros de tags -->
-    <div class="filter-container">
-        <h3>Filtrar por Tags</h3>
-        <div class="filter-tags" id="filterTags">
-            {% for tag in unique_tags %}
-            <label><input type="checkbox" class="tag-filter" value="{{ tag }}" onchange="filterByTags()"> {{ tag }}</label>
-            {% endfor %}
-        </div>
-    </div>
-
+    
     <!-- Barra de pesquisa -->
     <div class="search-container">
         <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Pesquise por nome ou email...">
@@ -130,8 +120,8 @@
                     <th onclick="sortTable(1)">Email</th>
                     <th onclick="sortTable(2)">Perfil Circle</th>
                     <th onclick="sortTable(3)">Status Ativo</th>
-                    <th onclick="sortTable(4)">Tags</th>
-                    <th onclick="sortTable(5)">Data de Registro</th>
+                    <th onclick="sortTable(4)">Data de Registro</th>
+                    <th onclick="sortTable(5)">Ver na Hotmart</th>
                     <th>Selecionar</th>
                 </tr>
             </thead>
@@ -142,8 +132,8 @@
                     <td>{{ user.email }}</td>
                     <td><a href="{{ user.profile_url }}" target="_blank" aria-label="URL do Perfil">Perfil</a></td>
                     <td>{{ user.active_status }}</td>
-                    <td>{{ user.tags|join:", " }}</td>
                     <td>{{ user.member_since|date:"d/m/Y H:i" }}</td>
+                    <td><a href="https://app.hotmart.com/subscriptions?accessionDate={{ hotmart_url_data.accession_date }}&endAccessionDate={{ hotmart_url_data.end_accession_date }}&status%5B0%5D=ACTIVE&status%5B1%5D=DELAYED&status%5B2%5D=CANCELLED_BY_ADMIN&status%5B3%5D=CANCELLED_BY_CUSTOMER&status%5B4%5D=CANCELLED_BY_SELLER&status%5B5%5D=INACTIVE&status%5B6%5D=STARTED&status%5B7%5D=OVERDUE&email={{ user.email }}" target="_blank" aria-label="Buscar Hotmart">Buscar</a></td>
                     <td><input type="checkbox"></td>
                 </tr>
                 {% empty %}
@@ -158,22 +148,7 @@
     <script>
         let sortDirections = {}; // Armazenar a direção de ordenação de cada coluna
         let originalRows = Array.from(document.querySelectorAll('#circleUserTable tbody tr')); // Armazenar as linhas originais
-
-        // Filtrar tabela por tags selecionadas
-        function filterByTags() {
-            let selectedTags = Array.from(document.querySelectorAll('.tag-filter:checked')).map(cb => cb.value);
-            let rows = document.querySelectorAll('#circleUserTable tbody tr');
-
-            rows.forEach(row => {
-                let tags = row.cells[4].innerText.split(', ').map(tag => tag.trim());
-                if (selectedTags.length === 0 || selectedTags.some(tag => tags.includes(tag))) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        }
-
+        
         function sortTable(n) {
             let table = document.getElementById("circleUserTable");
             let rows = Array.from(table.rows).slice(1); // Ignora o cabeçalho
