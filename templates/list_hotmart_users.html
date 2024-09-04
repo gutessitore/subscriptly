@@ -34,10 +34,29 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
             white-space: nowrap;
+            cursor: pointer; /* Adiciona cursor para indicar que as colunas são clicáveis */
         }
         table th {
             background-color: #007bff;
             color: white;
+        }
+        table th.active {
+            background-color: #0056b3;
+        }
+        table th::after {
+            content: '\25B4'; /* Seta para cima padrão */
+            position: absolute;
+            right: 10px;
+            font-size: 12px;
+            opacity: 0; /* Escondido por padrão */
+        }
+        table th.active.asc::after {
+            opacity: 1;
+            content: '\25B4'; /* Seta para cima (ordenado ascendente) */
+        }
+        table th.active.desc::after {
+            opacity: 1;
+            content: '\25BE'; /* Seta para baixo (ordenado descendente) */
         }
         table tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -65,34 +84,52 @@
             background-color: #007bff;
             color: white;
         }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 50%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Assinaturas Hotmart</h2>
+        <h2>Assinaturas Hotmart {{ subscriptions|length }}</h2>
+
+        <!-- Barra de pesquisa -->
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Pesquise por qualquer campo...">
+        </div>
+
         <div class="table-container">
-            <table>
+            <table id="hotmartTable">
                 <thead>
                     <tr>
-                        <th>Código do Assinante</th>
-                        <th>ID da Assinatura</th>
-                        <th>Status</th>
-                        <th>Data de Adesão</th>
-                        <th>Data de Solicitação</th>
-                        <th>Teste</th>
-                        <th>Nome do Plano</th>
-                        <th>ID do Plano</th>
-                        <th>Período de Recorrência</th>
-                        <th>Nome do Produto</th>
-                        <th>ID do Produto</th>
-                        <th>Ucode do Produto</th>
-                        <th>Moeda</th>
-                        <th>Valor</th>
-                        <th>Nome do Assinante</th>
-                        <th>Ucode do Assinante</th>
-                        <th>Email do Assinante</th>
-                        <th>Data da Próxima Cobrança</th>
-                        <th>Transação</th>
+                        <th onclick="sortTable(0)">Código do Assinante</th>
+                        <th onclick="sortTable(1)">ID da Assinatura</th>
+                        <th onclick="sortTable(2)">Status</th>
+                        <th onclick="sortTable(3)">Data de Adesão</th>
+                        <th onclick="sortTable(4)">Data de Solicitação</th>
+                        <th onclick="sortTable(5)">Teste</th>
+                        <th onclick="sortTable(6)">Nome do Plano</th>
+                        <th onclick="sortTable(7)">ID do Plano</th>
+                        <th onclick="sortTable(8)">Período de Recorrência</th>
+                        <th onclick="sortTable(9)">Nome do Produto</th>
+                        <th onclick="sortTable(10)">ID do Produto</th>
+                        <th onclick="sortTable(11)">Ucode do Produto</th>
+                        <th onclick="sortTable(12)">Moeda</th>
+                        <th onclick="sortTable(13)">Valor</th>
+                        <th onclick="sortTable(14)">Nome do Assinante</th>
+                        <th onclick="sortTable(15)">Ucode do Assinante</th>
+                        <th onclick="sortTable(16)">Email do Assinante</th>
+                        <th onclick="sortTable(17)">Data da Próxima Cobrança</th>
+                        <th onclick="sortTable(18)">Transação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -130,5 +167,73 @@
             <a href="{% url 'home' %}">Voltar para Início</a>
         </div>
     </div>
+
+    <script>
+        let sortDirections = {}; // Armazenar o estado da ordenação de cada coluna
+
+        function sortTable(n) {
+            let table = document.getElementById("hotmartTable");
+            let rows = Array.from(table.rows).slice(1); // Ignora o cabeçalho
+            let dir = sortDirections[n] || "asc"; // Direção padrão é ascendente
+
+            // Função de comparação
+            const compare = (a, b) => {
+                let x = a.cells[n].innerText.toLowerCase();
+                let y = b.cells[n].innerText.toLowerCase();
+                
+                if (dir === "asc") {
+                    return x > y ? 1 : (x < y ? -1 : 0);
+                } else {
+                    return x < y ? 1 : (x > y ? -1 : 0);
+                }
+            };
+
+            // Ordena as linhas
+            rows.sort(compare);
+
+            // Reinsere as linhas na tabela
+            rows.forEach(row => table.tBodies[0].appendChild(row));
+
+            // Alterna a direção da próxima ordenação
+            sortDirections[n] = dir === "asc" ? "desc" : "asc";
+
+            // Atualiza ícones de ordenação
+            updateSortIcons(n);
+        }
+
+        function updateSortIcons(columnIndex) {
+            let headers = document.querySelectorAll("#hotmartTable th");
+            headers.forEach((header, index) => {
+                header.classList.remove('active', 'asc', 'desc');
+                if (index === columnIndex) {
+                    header.classList.add('active', sortDirections[columnIndex]);
+                }
+            });
+        }
+
+        // Função para filtrar a tabela com base na pesquisa
+        function filterTable() {
+            let input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("hotmartTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) { // Ignora o cabeçalho
+                tr[i].style.display = "none"; // Esconde todas as linhas
+
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";  // Mostra a linha se encontrar o texto
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
