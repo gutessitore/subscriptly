@@ -96,19 +96,43 @@
             margin-top: 20px;
             color: #333;
         }
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: white;
+            text-align: left;
+        }
+        .alert-success {
+            background-color: #28a745;
+        }
+        .alert-error {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Upload de Dados</h2>
+
+        <!-- Exibir mensagens de sucesso ou erro -->
+        {% if messages %}
+        <div class="message">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div>
                 <label for="model_choice">Escolha do modelo:</label>
                 <select id="model_choice" name="model_choice">
-                    <option value="circle_users">Circle</option>
-                    <option value="hotmart_subscriptions">Hotmart</option>
-                    <!-- Adicione outras opções conforme necessário -->
+                    <option value="circle_user">Circle Users</option>
+                    <option value="hotmart_subscriptions">Hotmart Subscriptions</option>
                 </select>
             </div>
             <div id="file-upload">
@@ -117,13 +141,6 @@
             </div>
             <button type="submit">Upload</button>
         </form>
-        {% if messages %}
-        <div class="message">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 
     <script>
@@ -149,6 +166,7 @@
 
             if (e.dataTransfer.files.length > 0) {
                 fileInput.files = e.dataTransfer.files;
+                fileUpload.querySelector('p').textContent = fileInput.files[0].name;
             }
         });
 

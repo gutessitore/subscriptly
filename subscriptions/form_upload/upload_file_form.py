@@ -7,4 +7,4 @@ class ModelChoiceUploadForm(forms.Form):
         ('hotmart_subscriptions', 'HotMart'),
     )
     model_choice = forms.ChoiceField(choices=MODEL_CHOICES, label='Escolha o modelo')
-    file = forms.FileField()
+    file = forms.FileField(label="Selecione o arquivo")
