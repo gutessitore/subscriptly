@@ -54,7 +54,7 @@ class HotmartAPI:
     def get_subscriptions(self, statuses, accession_date=None, next_page_token=None):
         if accession_date is None:
             # Calcula a data de hoje menos 365 dias e converte para milissegundos
-            accession_date = int((datetime.now() - timedelta(days=365)).timestamp() * 1000)
+            accession_date = int((datetime.now() - timedelta(days=365 * 5)).timestamp() * 1000)
 
         url = "https://developers.hotmart.com/payments/api/v1/subscriptions"
         headers = {
