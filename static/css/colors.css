@@ -1,0 +1,32 @@
+:root {
+    /* Definição das cores baseadas nas cores fornecidas */
+    --melon: #fdc5b7; /* MELON */
+    --olivine: #bfce7a; /* OLIVINE */
+    --coral: #f0845a; /* CORAL */
+    --aerospace-orange: #ff4b00; /* AEROSPACE ORANGE */
+    --dark-moss-green: #5e6038; /* DARK MOSS GREEN */
+    --black-olive: #364038; /* BLACK OLIVE */
+    --ruddy-blue: #89aed4; /* RUDDY BLUE */
+    --sapphire: #2f57b2; /* SAPPHIRE */
+    --silver: #cec8c6; /* SILVER */
+    --linen: #f6eade; /* LINEN */
+
+    /* Exemplo de cores de texto e fundo */
+    --primary-color: var(--coral);
+    --primary-hover-color: var(--aerospace-orange);
+    --background-color: var(--silver);
+    --text-color: var(--black-olive);
+    --text-light-color: var(--silver);
+    --white-color: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+
+    --button-bg: var(--ruddy-blue);
+    --button-bg-hover: var(--olivine);
+
+    --table-header: var(--olivine);
+    --table-header-active: var(--dark-moss-green);
+
+    --navbar-bg: var(--ruddy-blue);
+    --navbar-a: var(--sapphire);
+    --navbar-a-hover: var(--linen);
+}

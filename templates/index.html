@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Rotina Perfeita</title>
+    <link rel="stylesheet" href="static/css/colors.css">
     <style>
         body {
             font-family: open-souce, sans-serif;
-            background-color: #f0f0f0;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
             display: flex;
@@ -36,14 +37,14 @@
         }
         a {
             text-decoration: none;
-            color: #ffffff;
-            background-color: #f0845a;
+            color: rgba(254, 254, 254, 1);
+            background-color: var(--button-bg);
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
         a:hover {
-            background-color: #ff4b00;
+            background-color: var(--button-bg-hover);
         }
     </style>
 </head>
@@ -51,7 +52,7 @@
     <div class="container">
         <h1>Portal Rotina Perfeita</h1>
         <p>Bem-vindo ao portal principal do seu projeto Rotina Perfeita. Escolha uma das opções abaixo para navegar:</p>
-        
+
         <div class="links">
             <a href="{% url 'compare_users' %}">⚠️ Usuários Circle em Atenção! ⚠️</a>
             <a href="{% url 'upload' %}">Carregar Usuários Circle</a>
