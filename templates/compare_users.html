@@ -16,6 +16,31 @@
             color: #333;
             margin-bottom: 20px;
         }
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        .filter-container h3 {
+            margin-bottom: 10px;
+        }
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap; /* Permite a quebra de linha */
+            justify-content: flex-start; /* Alinha os itens à esquerda */
+            max-width: 800px;
+            margin: 0 auto; /* Centraliza horizontalmente a seção */
+            background-color: #f0f0f0; /* Cor de fundo */
+            padding: 20px; /* Espaçamento interno */
+            border-radius: 8px; /* Bordas arredondadas */
+        }
+        .filter-tags label {
+            margin-right: 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .filter-tags input[type="checkbox"] {
+            margin-right: 5px;
+            flex-basis: calc(33.333% - 10px);
+        }
         .table-container {
             max-width: 100%;
             overflow-x: auto;
@@ -82,6 +107,16 @@
 
     <h2>Usuários Circle que Não Estão no Hotmart ({{ circle_users|length }})</h2>
 
+    <!-- Seção de filtros de tags -->
+    <div class="filter-container">
+        <h3>Filtrar por Tags</h3>
+        <div class="filter-tags" id="filterTags">
+            {% for tag in unique_tags %}
+            <label><input type="checkbox" class="tag-filter" value="{{ tag }}" onchange="filterByTags()"> {{ tag }}</label>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Barra de pesquisa -->
     <div class="search-container">
         <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Pesquise por nome ou email...">
@@ -93,9 +128,10 @@
                 <tr>
                     <th onclick="sortTable(0)">Nome</th>
                     <th onclick="sortTable(1)">Email</th>
-                    <th onclick="sortTable(2)">Localização</th>
+                    <th onclick="sortTable(2)">Perfil Circle</th>
                     <th onclick="sortTable(3)">Status Ativo</th>
-                    <th onclick="sortTable(4)">Data de Registro</th>
+                    <th onclick="sortTable(4)">Tags</th>
+                    <th onclick="sortTable(5)">Data de Registro</th>
                     <th>Selecionar</th>
                 </tr>
             </thead>
@@ -104,8 +140,9 @@
                 <tr>
                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.location }}</td>
+                    <td><a href="{{ user.profile_url }}" target="_blank" aria-label="URL do Perfil">Perfil</a></td>
                     <td>{{ user.active_status }}</td>
+                    <td>{{ user.tags|join:", " }}</td>
                     <td>{{ user.member_since|date:"d/m/Y H:i" }}</td>
                     <td><input type="checkbox"></td>
                 </tr>
@@ -121,6 +158,21 @@
     <script>
         let sortDirections = {}; // Armazenar a direção de ordenação de cada coluna
         let originalRows = Array.from(document.querySelectorAll('#circleUserTable tbody tr')); // Armazenar as linhas originais
+
+        // Filtrar tabela por tags selecionadas
+        function filterByTags() {
+            let selectedTags = Array.from(document.querySelectorAll('.tag-filter:checked')).map(cb => cb.value);
+            let rows = document.querySelectorAll('#circleUserTable tbody tr');
+
+            rows.forEach(row => {
+                let tags = row.cells[4].innerText.split(', ').map(tag => tag.trim());
+                if (selectedTags.length === 0 || selectedTags.some(tag => tags.includes(tag))) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
 
         function sortTable(n) {
             let table = document.getElementById("circleUserTable");
