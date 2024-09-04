@@ -3,55 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Início - Meu Site</title>
+    <title>Portal Rotina Perfeita</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: open-souce, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             text-align: center;
+            background-color: white;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
+        h1 {
             color: #333;
-            margin-bottom: 20px;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        p {
+            color: #666;
         }
-        li {
-            margin: 10px 0;
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
         a {
             text-decoration: none;
-            color: #007bff;
-            font-size: 18px;
-            transition: color 0.3s ease;
+            color: #ffffff;
+            background-color: #f0845a;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
         a:hover {
-            color: #0056b3;
+            background-color: #ff4b00;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Bem-vindo ao Meu Site</h2>
-        <ul>
-            <li><a href="{% url 'upload' %}">Upload de Dados</a></li>
-            <li><a href="{% url 'circle_user_list' %}">Lista de Usuários Circle</a></li>
-            <li><a href="{% url 'extract_hotmart_data' %}">Extrair Dados do Hotmart</a></li>
-            <li><a href="{% url 'list_hotmart_users' %}">Listar Usuários do Hotmart</a></li>
-            <li><a href="{% url 'admin:index' %}">Painel de Administração</a></li>
-        </ul>
+        <h1>Portal Rotina Perfeita</h1>
+        <p>Bem-vindo ao portal principal do seu projeto Rotina Perfeita. Escolha uma das opções abaixo para navegar:</p>
+        
+        <div class="links">
+            <a href="{% url 'compare_users' %}">⚠️ Usuários Circle em Atenção! ⚠️</a>
+            <a href="{% url 'upload' %}">Carregar Usuários Circle</a>
+            <a href="{% url 'extract_hotmart_data' %}">Extrair Dados da Hotmart</a>
+            <a href="{% url 'circle_user_list' %}">Ver Usuários Circle</a>
+            <a href="{% url 'list_hotmart_users' %}">Listar Usuários Hotmart</a>
+            <a href="{% url 'admin:index' %}">Administração</a>
+        </div>
     </div>
 </body>
 </html>
