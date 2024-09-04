@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparar Usuários</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            cursor: pointer;
+            position: relative;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+        table th.active {
+            background-color: #0056b3;
+        }
+        table th::after {
+            content: '\25B4'; /* Seta para cima padrão */
+            position: absolute;
+            right: 10px;
+            opacity: 0; /* Escondido por padrão */
+        }
+        table th.active.asc::after {
+            opacity: 1;
+            content: '\25B4'; /* Seta para cima (ordenado ascendente) */
+        }
+        table th.active.desc::after {
+            opacity: 1;
+            content: '\25BE'; /* Seta para baixo (ordenado descendente) */
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 50%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Usuários Circle que Não Estão no Hotmart ({{ circle_users|length }})</h2>
+
+    <!-- Barra de pesquisa -->
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Pesquise por nome ou email...">
+    </div>
+
+    <div class="table-container">
+        <table id="circleUserTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Nome</th>
+                    <th onclick="sortTable(1)">Email</th>
+                    <th onclick="sortTable(2)">Localização</th>
+                    <th onclick="sortTable(3)">Status Ativo</th>
+                    <th onclick="sortTable(4)">Data de Registro</th>
+                    <th>Selecionar</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for user in circle_users %}
+                <tr>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.location }}</td>
+                    <td>{{ user.active_status }}</td>
+                    <td>{{ user.member_since|date:"d/m/Y H:i" }}</td>
+                    <td><input type="checkbox"></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">Nenhum usuário encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let sortDirections = {}; // Armazenar a direção de ordenação de cada coluna
+        let originalRows = Array.from(document.querySelectorAll('#circleUserTable tbody tr')); // Armazenar as linhas originais
+
+        function sortTable(n) {
+            let table = document.getElementById("circleUserTable");
+            let rows = Array.from(table.rows).slice(1); // Ignora o cabeçalho
+            let dir = sortDirections[n] || "desc"; // A primeira ordenação é descendente por padrão
+
+            if (!sortDirections[n] || sortDirections[n] === "default") {
+                // Ordenar em ordem descendente
+                rows.sort((a, b) => compareCells(a.cells[n], b.cells[n], false));
+                sortDirections[n] = "desc";
+            } else if (sortDirections[n] === "desc") {
+                // Ordenar em ordem ascendente
+                rows.sort((a, b) => compareCells(a.cells[n], b.cells[n], true));
+                sortDirections[n] = "asc";
+            } else {
+                // Voltar à ordem original
+                rows = originalRows;
+                sortDirections[n] = "default";
+            }
+
+            // Reinsere as linhas ordenadas (ou a ordem original)
+            let tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = "";
+            rows.forEach(row => tableBody.appendChild(row));
+
+            // Atualiza os ícones de setas e highlights
+            updateSortIcons(n);
+        }
+
+        function compareCells(cellA, cellB, asc) {
+            let x = cellA.innerText.toLowerCase();
+            let y = cellB.innerText.toLowerCase();
+            return asc ? (x > y ? 1 : (x < y ? -1 : 0)) : (x < y ? 1 : (x > y ? -1 : 0));
+        }
+
+        function updateSortIcons(columnIndex) {
+            let headers = document.querySelectorAll("#circleUserTable th");
+
+            headers.forEach((header, index) => {
+                header.classList.remove('active', 'asc', 'desc');
+                if (index === columnIndex) {
+                    if (sortDirections[columnIndex] === "asc") {
+                        header.classList.add('active', 'asc');
+                    } else if (sortDirections[columnIndex] === "desc") {
+                        header.classList.add('active', 'desc');
+                    }
+                }
+            });
+        }
+
+        // Função para filtrar a tabela com base na pesquisa
+        function filterTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("circleUserTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) { // Começa em 1 para ignorar o cabeçalho
+                tr[i].style.display = "none"; // Esconde todas as linhas
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";  // Mostra a linha se encontrar o texto
+                            break; // Sai do loop quando encontra uma correspondência
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

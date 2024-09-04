@@ -10,4 +10,5 @@ urlpatterns = [
     path("circle", views.circle_user_list_view, name="circle_user_list"),
     path("hotmart/extract", views.extract_hotmart_data, name="extract_hotmart_data"),
     path("hotmart", views.list_hotmart_users_view, name="list_hotmart_users"),
+    path("compare", views.compare_users_view, name="compare_users"),
 ]

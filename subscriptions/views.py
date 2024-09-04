@@ -34,3 +34,14 @@ def list_hotmart_users_view(request):
 
 def extract_hotmart_data(request):
     return extract_subscriptions_view(request)
+
+def compare_users_view(request):
+    hotmart_emails = HotmartSubscription.objects.values_list('subscriber_email', flat=True)
+
+    circle_users_not_in_hotmart = CircleUser.objects.exclude(email__in=hotmart_emails)
+
+    context = {
+        'circle_users': circle_users_not_in_hotmart
+    }
+
+    return render(request, 'compare_users.html', context)
