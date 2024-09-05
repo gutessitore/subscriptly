@@ -4,17 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload de Dados</title>
+    <link rel="stylesheet" href="/static/css/colors.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
+
+        /* Menu superior */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--navbar-bg);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: var(--navbar-a);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: var(--navbar-a-hover);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
         .container {
             background-color: #ffffff;
             padding: 30px 40px;
@@ -23,24 +52,24 @@
             max-width: 400px;
             width: 100%;
             text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 80px;
         }
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
+
         form {
             display: flex;
             flex-direction: column;
             align-items: stretch;
         }
+
         label {
             font-size: 16px;
             margin-bottom: 8px;
             color: #555;
             text-align: left;
         }
+
         select, input[type="file"] {
             margin-bottom: 15px;
             padding: 12px 15px;
@@ -53,10 +82,12 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease;
         }
+
         select:focus, input[type="file"]:focus {
             border-color: #80bdff;
             outline: none;
         }
+
         #file-upload {
             border: 2px dashed #ced4da;
             border-radius: 8px;
@@ -67,19 +98,23 @@
             color: #6c757d;
             margin-bottom: 10px;
         }
+
         #file-upload.dragging {
-            border-color: #007bff;
-            color: #007bff;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
+
         #file-upload p {
             margin: 0;
             font-size: 16px;
         }
+
         input[type="file"] {
             display: none;
         }
+
         button {
-            background-color: #007bff;
+            background-color: var(--button-bg);
             color: white;
             border: none;
             padding: 12px;
@@ -89,13 +124,16 @@
             transition: background-color 0.3s ease;
             width: 100%;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--button-bg-hover);
         }
+
         .message {
             margin-top: 20px;
             color: #333;
         }
+
         .alert {
             padding: 10px;
             margin-bottom: 10px;
@@ -103,15 +141,23 @@
             color: white;
             text-align: left;
         }
+
         .alert-success {
-            background-color: #28a745;
+            background-color: var(--message-success-bg);
         }
+
         .alert-error {
-            background-color: #dc3545;
+            background-color: var(--message-error-bg);
         }
     </style>
 </head>
 <body>
+
+    <!-- Menu superior -->
+    <div class="navbar">
+        <a href="{% url 'index' %}">Início</a>
+    </div>
+
     <div class="container">
         <h2>Upload de Dados</h2>
 
@@ -131,8 +177,8 @@
             <div>
                 <label for="model_choice">Escolha do modelo:</label>
                 <select id="model_choice" name="model_choice">
-                    <option value="circle_user">Circle Users</option>
-                    <option value="hotmart_subscriptions">Hotmart Subscriptions</option>
+                    <option value="circle_user">Circle</option>
+{#                    <option value="hotmart_subscriptions">Hotmart</option>#}
                 </select>
             </div>
             <div id="file-upload">
@@ -176,5 +222,6 @@
             }
         });
     </script>
+
 </body>
 </html>

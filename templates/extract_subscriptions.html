@@ -4,59 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extrair Assinaturas Hotmart</title>
+    <link rel="stylesheet" href="/static/css/colors.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+
+        /* Menu superior */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--navbar-bg);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
+
+        .navbar a {
+            color: var(--navbar-a);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: var(--navbar-a-hover);
+        }
+
         h2 {
             text-align: center;
             color: #333;
             margin-bottom: 20px;
         }
+
         h3 {
             color: #333;
             margin-bottom: 10px;
         }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
         .status-info {
             margin-bottom: 30px;
         }
+
         .status-info table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         .status-info th, .status-info td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
         }
+
         .status-info th {
-            background-color: #f9f9f9;
+            background-color: var(--table-header);
+            color: white;
         }
+
         form {
             display: flex;
             flex-direction: column;
         }
+
         label {
             margin-bottom: 10px;
             font-weight: bold;
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         button {
-            background-color: #007bff;
+            background-color: var(--button-bg);
             color: white;
             border: none;
             padding: 10px;
@@ -64,32 +101,54 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--button-bg-hover);
         }
+
         .back-link {
             text-align: center;
             margin-top: 20px;
         }
+
         .back-link a {
-            color: #007bff;
+            color: var(--navbar-a);
             text-decoration: none;
             padding: 10px 20px;
-            border: 1px solid #007bff;
+            border: 1px solid var(--navbar-a);
             border-radius: 5px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+
         .back-link a:hover {
-            background-color: #007bff;
+            background-color: var(--navbar-a-hover);
             color: white;
         }
     </style>
 </head>
 <body>
+
+    <!-- Menu superior -->
+    <div class="navbar">
+        <a href="{% url 'index' %}">Início</a>
+    </div>
+
     <div class="container">
         <h2>Extrair Assinaturas Hotmart</h2>
         
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                {{ form.statuses.label_tag }}
+                {{ form.statuses }}
+            </div>
+            <button type="submit">Extrair Dados</button>
+        </form>
+        
         <div class="status-info">
+{#            TODO ajustar definições de contas canceladas#}
             <h3>Definições de Status de Assinatura</h3>
             <table>
                 <tr>
@@ -98,7 +157,7 @@
                 </tr>
                 <tr>
                     <td>Ativo</td>
-                    <td>O pagamento da última recorrência está em dia e a assinatura ainda está no período de duração.</td>
+                    <td>O pagamento da última recorrência está em dia e a assinatura ainda dentro do período de duração.</td>
                 </tr>
                 <tr>
                     <td>Atrasado</td>
@@ -129,19 +188,6 @@
                     <td>O período de assinatura terminou. As recorrências cobradas neste período podem ter sido quitadas ou pode haver uma ou mais pendentes.</td>
                 </tr>
             </table>
-        </div>
-
-        <form method="post">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="form-group">
-                {{ form.statuses.label_tag }}
-                {{ form.statuses }}
-            </div>
-            <button type="submit">Extrair Dados</button>
-        </form>
-        <div class="back-link">
-            <a href="{% url 'home' %}">Voltar para Início</a>
         </div>
     </div>
 </body>

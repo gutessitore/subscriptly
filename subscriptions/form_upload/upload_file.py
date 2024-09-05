@@ -14,6 +14,7 @@ HANDLE_FUNCTIONS = {
 
 
 def upload_file(request):
+    # TODO fix error message
     if request.method == 'POST':
         form = ModelChoiceUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -27,7 +28,7 @@ def upload_file(request):
                     # Chama a função associada para processar o arquivo
                     handle_function(file)
                     messages.success(request, 'Upload realizado com sucesso!')
-                    return redirect('success')
+                    return redirect('hotmart/extract')
                 except Exception as e:
                     # Trata erros que possam ocorrer ao processar o arquivo
                     messages.error(request, f"Erro ao processar o arquivo: {str(e)}")

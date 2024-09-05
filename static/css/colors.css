@@ -14,7 +14,7 @@
     /* Exemplo de cores de texto e fundo */
     --primary-color: var(--coral);
     --primary-hover-color: var(--aerospace-orange);
-    --background-color: var(--silver);
+    --background-color: #f8f9fa;
     --text-color: var(--black-olive);
     --text-light-color: var(--silver);
     --white-color: #ffffff;
@@ -29,4 +29,7 @@
     --navbar-bg: var(--ruddy-blue);
     --navbar-a: var(--sapphire);
     --navbar-a-hover: var(--linen);
+
+    --message-success-bg: var(--olivine);
+    --message-error-bg: var(--aerospace-orange);
 }

@@ -4,90 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assinaturas Hotmart</title>
+    <link rel="stylesheet" href="/static/css/colors.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
+
+        /* Menu superior */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--navbar-bg);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: var(--navbar-a);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: var(--navbar-a-hover);
+        }
+
         h2 {
             text-align: center;
             color: #333;
             margin-bottom: 20px;
+            margin-top: 110px; /* Espaçamento para o menu superior */
         }
+
+        /* Restante do estilo */
         .table-container {
-            max-width: 100%;
+            max-width: 98%;
             overflow-x: auto;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            margin-right: auto;
+            margin-left: auto;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1200px;
         }
+
         table th, table td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
             white-space: nowrap;
-            cursor: pointer; /* Adiciona cursor para indicar que as colunas são clicáveis */
+            cursor: pointer;
+            position: relative;
         }
+
         table th {
-            background-color: #007bff;
+            background-color: var(--table-header);
             color: white;
         }
+
         table th.active {
-            background-color: #0056b3;
+            background-color: var(--table-header-active);
         }
+
         table th::after {
-            content: '\25B4'; /* Seta para cima padrão */
+            content: '\25B4';
             position: absolute;
             right: 10px;
             font-size: 12px;
-            opacity: 0; /* Escondido por padrão */
+            opacity: 0;
         }
+
         table th.active.asc::after {
             opacity: 1;
             content: '\25B4'; /* Seta para cima (ordenado ascendente) */
         }
+
         table th.active.desc::after {
             opacity: 1;
             content: '\25BE'; /* Seta para baixo (ordenado descendente) */
         }
+
         table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         table tr:hover {
             background-color: #f1f1f1;
         }
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .back-link a {
-            color: #007bff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid #007bff;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .back-link a:hover {
-            background-color: #007bff;
-            color: white;
-        }
+
         .search-container {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .search-container input {
             padding: 10px;
             font-size: 16px;
@@ -96,11 +119,35 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            background-color: var(--button-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            background-color: var(--button-bg-hover);
+        }
     </style>
 </head>
 <body>
+
+    <!-- Menu superior -->
+    <div class="navbar">
+        <a href="{% url 'index' %}">Início</a> <!-- Link para a página inicial -->
+    </div>
+
     <div class="container">
-        <h2>Assinaturas Hotmart {{ subscriptions|length }}</h2>
+        <h2>Assinaturas Hotmart ({{ subscriptions|length }})</h2>
 
         <!-- Barra de pesquisa -->
         <div class="search-container">
@@ -163,8 +210,9 @@
                 </tbody>
             </table>
         </div>
+
         <div class="back-link">
-            <a href="{% url 'home' %}">Voltar para Início</a>
+            <a href="{% url 'index' %}">Voltar para Início</a>
         </div>
     </div>
 
@@ -176,28 +224,19 @@
             let rows = Array.from(table.rows).slice(1); // Ignora o cabeçalho
             let dir = sortDirections[n] || "asc"; // Direção padrão é ascendente
 
-            // Função de comparação
             const compare = (a, b) => {
                 let x = a.cells[n].innerText.toLowerCase();
                 let y = b.cells[n].innerText.toLowerCase();
-                
-                if (dir === "asc") {
-                    return x > y ? 1 : (x < y ? -1 : 0);
-                } else {
-                    return x < y ? 1 : (x > y ? -1 : 0);
-                }
+
+                return dir === "asc" ? (x > y ? 1 : (x < y ? -1 : 0)) : (x < y ? 1 : (x > y ? -1 : 0));
             };
 
-            // Ordena as linhas
             rows.sort(compare);
 
-            // Reinsere as linhas na tabela
             rows.forEach(row => table.tBodies[0].appendChild(row));
 
-            // Alterna a direção da próxima ordenação
             sortDirections[n] = dir === "asc" ? "desc" : "asc";
 
-            // Atualiza ícones de ordenação
             updateSortIcons(n);
         }
 
@@ -211,7 +250,6 @@
             });
         }
 
-        // Função para filtrar a tabela com base na pesquisa
         function filterTable() {
             let input, filter, table, tr, td, i, j, txtValue;
             input = document.getElementById("searchInput");
@@ -226,7 +264,7 @@
                 for (j = 0; j < td.length; j++) {
                     if (td[j]) {
                         txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        if (txtValue.toLowerCase().includes(filter)) {
                             tr[i].style.display = "";  // Mostra a linha se encontrar o texto
                             break;
                         }
@@ -235,5 +273,6 @@
             }
         }
     </script>
+
 </body>
 </html>
