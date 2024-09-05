@@ -1,12 +1,9 @@
-from datetime import datetime, timedelta
-
-import pandas as pd
-from django.http import HttpResponse
 from django.shortcuts import render
 
 from subscriptions.circle.upload_file import upload_file
 from subscriptions.hotmart.api_extractor import extract_subscriptions_view
 from subscriptions.integrations.circle_hotmart_integration import update_non_subscribed_users
+from subscriptions.integrations.excel_download import export_non_subscribed_users_to_excel
 from subscriptions.models import CircleUser, HotmartSubscription, NonSubscribedCircleUser
 
 
@@ -47,18 +44,5 @@ def list_non_subscribed_circle_users(request):
 
 
 def export_users_to_excel(request):
-    users = NonSubscribedCircleUser.objects.all().values(
-        'first_name', 'last_name', 'email', 'profile_url',
-        'active_status', 'member_since', 'hotmart_search_link'
-    )
-
-    df = pd.DataFrame(users)
-
-    if 'member_since' in df.columns and pd.api.types.is_datetime64_any_dtype(df['member_since']):
-        df['member_since'] = df['member_since'].dt.tz_localize(None)  # Remover fuso horário
-
-    response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="circle_users.xlsx"'
-
-    df.to_excel(response, index=False)
+    response = export_non_subscribed_users_to_excel()
     return response
