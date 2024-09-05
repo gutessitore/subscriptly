@@ -108,28 +108,32 @@ def extract_subscriptions_view(request):
                 subscriptions = api.get_subscriptions(statuses)
 
                 for sub in subscriptions:
-                    HotmartSubscription.objects.create(
-                        subscriber_code=sub['subscriber_code'],
-                        subscription_id=sub['subscription_id'],
-                        status=sub['status'],
-                        accession_date=convert_timestamp_to_datetime(sub['accession_date']),
-                        request_date=convert_timestamp_to_datetime(sub['request_date']),
-                        trial=sub['trial'],
-                        plan_name=sub['plan']['name'],
-                        plan_id=sub['plan']['id'],
-                        recurrency_period=sub['plan']['recurrency_period'],
-                        product_name=sub['product']['name'],
-                        product_id=sub['product']['id'],
-                        product_ucode=sub['product']['ucode'],
-                        price_currency_code=sub['price']['currency_code'],
-                        price_value=sub['price']['value'],
-                        subscriber_name=sub['subscriber']['name'],
-                        subscriber_ucode=sub['subscriber']['ucode'],
-                        subscriber_email=sub['subscriber']['email'],
-                        date_next_charge=convert_timestamp_to_datetime(sub['date_next_charge']),
-                        transaction=sub['transaction']
+                    # Usar update_or_create para criar ou atualizar os dados com base no subscriber_code
+                    HotmartSubscription.objects.update_or_create(
+                        subscriber_code=sub['subscriber_code'],  # Chave única
+                        defaults={
+                            'subscription_id': sub['subscription_id'],
+                            'status': sub['status'],
+                            'accession_date': convert_timestamp_to_datetime(sub['accession_date']),
+                            'request_date': convert_timestamp_to_datetime(sub['request_date']),
+                            'trial': sub['trial'],
+                            'plan_name': sub['plan']['name'],
+                            'plan_id': sub['plan']['id'],
+                            'recurrency_period': sub['plan']['recurrency_period'],
+                            'product_name': sub['product']['name'],
+                            'product_id': sub['product']['id'],
+                            'product_ucode': sub['product']['ucode'],
+                            'price_currency_code': sub['price']['currency_code'],
+                            'price_value': sub['price']['value'],
+                            'subscriber_name': sub['subscriber']['name'],
+                            'subscriber_ucode': sub['subscriber']['ucode'],
+                            'subscriber_email': sub['subscriber']['email'],
+                            'date_next_charge': convert_timestamp_to_datetime(sub['date_next_charge']),
+                            'transaction': sub['transaction'],
+                        }
                     )
-                logger.info("Assinaturas Hotmart inseridas com sucesso no banco de dados.")
+
+                logger.info("Assinaturas Hotmart inseridas/atualizadas com sucesso no banco de dados.")
                 return redirect('success')
             except Exception as e:
                 logger.error(f"Erro ao processar assinaturas: {e}")
@@ -140,3 +144,4 @@ def extract_subscriptions_view(request):
         form = HotmartSubscriptionForm()
 
     return render(request, 'extract_subscriptions.html', {'form': form})
+
