@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
 
+import pandas as pd
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from subscriptions.form_upload.upload_file import upload_file
+from subscriptions.circle.upload_file import upload_file
 from subscriptions.hotmart.api_extractor import extract_subscriptions_view
-from subscriptions.models import CircleUser, HotmartSubscription
+from subscriptions.integrations.circle_hotmart_integration import update_non_subscribed_users
+from subscriptions.models import CircleUser, HotmartSubscription, NonSubscribedCircleUser
 
 
 def index(request):
@@ -37,56 +40,25 @@ def extract_hotmart_data(request):
     return extract_subscriptions_view(request)
 
 
-def compare_users_view(request):
+def list_non_subscribed_circle_users(request):
+    update_non_subscribed_users()
+    users = NonSubscribedCircleUser.objects.all()
+    return render(request, 'compare_users.html', {'users': users})
 
-    emails_diversity_program = [
-        "kelly.sts17@gmail.com", "alanisesteffanysilvaa@gmail.com",
-        "beatriz.ngonc@gmail.com", "stephmmeireles@gmail.com",
-        "marcellafariasid@gmail.com", "amandabarbozacontato@gmail.com",
-        "heloisa.chs@gmail.com", "dressa.lops@gmail.com",
-        "camylagcelestino@gmail.com", "depaula.stephanny@gmail.com",
-        "juuhcmartins@gmail.com", "alannacarla@outlook.com.br",
-        "oliveiramara0987@gmail.com", "thaisv.franca@gmail.com",
-        "bialaris17@gmail.com", "aanabia033@gmail.com",
-        "angelborges@hotmail.com", "annanaan304@gmail.com",
-        "brunaluisasantos07@gmail.com", "estelamscoelho@gmail.com",
-        "iasmyn.almeida78@gmail.com", "julia.nyte@hotmail.com",
-        "kedmabarroso15@gmail.com", "laurarosa299@gmail.com",
-        "castromayara@outlook.com", "saramirandacontato@hotmail.com",
-        "scoelho684@gmail.com", "valsortiz@yahoo.com.br",
-        "vic.dames@gmail.com"
-    ]
 
-    tags_to_exclude = ['Equipe do Clube', 'Embaixadora']
-
-    hotmart_emails = HotmartSubscription.objects.values_list('subscriber_email', flat=True)
-    circle_users = (
-        CircleUser.objects
-        .exclude(email__in=hotmart_emails)
-        .exclude(email__in=emails_diversity_program)
+def export_users_to_excel(request):
+    users = NonSubscribedCircleUser.objects.all().values(
+        'first_name', 'last_name', 'email', 'profile_url',
+        'active_status', 'member_since', 'hotmart_search_link'
     )
 
-    circle_users = [
-        user for user in circle_users if
-        not any(tag in tags_to_exclude for tag in user.tags)
-    ]
+    df = pd.DataFrame(users)
 
-    all_tags = set()
-    for user in circle_users:
-        all_tags.update(user.tags)
+    if 'member_since' in df.columns and pd.api.types.is_datetime64_any_dtype(df['member_since']):
+        df['member_since'] = df['member_since'].dt.tz_localize(None)  # Remover fuso horário
 
-    accession_date = int((datetime.now() - timedelta(days=365 * 5)).timestamp() * 1000)
-    end_accession_date = int(datetime.now().timestamp() * 1000)
-    status = 'ACTIVE'
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="circle_users.xlsx"'
 
-    context = {
-        'circle_users': circle_users,
-        'unique_tags': sorted(all_tags),
-        'hotmart_url_data': {
-            'accession_date': accession_date,
-            'end_accession_date': end_accession_date,
-            'status': status
-        }
-    }
-
-    return render(request, 'compare_users.html', context)
+    df.to_excel(response, index=False)
+    return response
