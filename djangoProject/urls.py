@@ -23,4 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('subscriptions/', include('subscriptions.urls')),
     path("", views.index, name="index"),
+    path('accounts/login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout')
 ]
