@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 
 POSTGRES_PASS = config('POSTGRES_PASS')
 POSTGRES_USER = config('POSTGRES_USER')
-CONN_NAME = config('CONN_NAME')
+DB_HOST = config('DB_HOST')
 DATABASE_NAME = config('DATABASE_NAME')
 
 DATABASES = {
@@ -88,7 +88,7 @@ DATABASES = {
         'USER': POSTGRES_USER,
         'PASSWORD': POSTGRES_PASS,
         # 'HOST': '127.0.0.1',
-        'HOST': f'/cloudsql/{CONN_NAME}',
+        'HOST': DB_HOST,
         'PORT': '5432',
     }
 }
