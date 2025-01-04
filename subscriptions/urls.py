@@ -12,5 +12,6 @@ urlpatterns = [
     path("hotmart/extract", views.extract_hotmart_data, name="extract_hotmart_data"),
     path("hotmart", views.list_hotmart_users_view, name="list_hotmart_users"),
     path("compare", views.list_non_subscribed_circle_users, name="compare_users"),
-    path('export-users/', export_users_to_excel, name='export_users_to_excel')
+    path('export-users/', export_users_to_excel, name='export_users_to_excel'),
+    path('circle/invite', views.invite_circle_user, name='invite_circle_user'),
 ]
