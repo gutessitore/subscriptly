@@ -1,4 +1,3 @@
-from objects.circle.community_member import CommunityMember
 import requests
 
 
@@ -36,7 +35,7 @@ class CircleAPI:
         response = requests.post(url, headers=self.auth_headers, data=payload)
 
 
-        if not response.status_code.ok():
+        if not response.ok:
             raise ValueError(
                 f"Failed to invite community member: {response.status_code} - {response.text}")
 

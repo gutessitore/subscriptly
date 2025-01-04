@@ -4,11 +4,11 @@ import string
 class PasswordGenerator:
     def __init__(
         self,
-        length: int = 12,
-        num_numbers: int = 0,
-        num_uppercase: int = 0,
+        length: int = 6,
+        num_numbers: int = 4,
+        num_uppercase: int = 1,
         num_lowercase: int = 0,
-        num_special_chars: int = 0,
+        num_special_chars: int = 1,
     ):
         """
         Initialize the password generator with specified options.
@@ -52,7 +52,8 @@ class PasswordGenerator:
         password_chars += random.choices(string.ascii_lowercase, k=self.num_lowercase)
 
         # Add special characters
-        special_chars = "!@#$%&*()-_=+[]{};:.?"
+        # special_chars = "!@#$%&*()-_=+[]{};:.?"
+        special_chars = "@#$%&"
         password_chars += random.choices(special_chars, k=self.num_special_chars)
 
         # Fill the remaining characters with lowercase letters
