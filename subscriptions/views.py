@@ -95,20 +95,27 @@ def export_users_to_excel(request):
 
 
 def validate_signature(request):
-    return True
-    # TODO: Implementar validação da assinatura
-    # HOTMART_SECRET_KEY = getattr(settings, "HOTMART_SECRET_KEY", "sua-chave-secreta-hotmart")
-    # signature = request.headers.get("x-hotmart-hmac-sha256")
-    # if not signature:
-    #     return False
-    #
-    # computed_signature = hmac.new(
-    #     HOTMART_SECRET_KEY.encode(),
-    #     request.body,
-    #     hashlib.sha256
-    # ).hexdigest()
-    #
-    # return hmac.compare_digest(signature, computed_signature)
+    # https://developers.hotmart.com/docs/en/2.0.0/webhook/purchase-webhook/
+    try:
+        secret_token = os.environ.get("HOTMART_SECRET_KEY")
+        if not secret_token:
+            logging.error("HOTMART_SECRET_KEY is not set in the environment.")
+            return False
+
+        received_token = request.headers.get("X-HOTMART-HOTTOK")
+        if not received_token:
+            logging.warning("Missing 'X-HOTMART-HOTTOK' in the request headers.")
+            return False
+
+        if received_token != secret_token:
+            logging.warning("Invalid 'X-HOTMART-HOTTOK' token.")
+            return False
+
+        return True
+
+    except Exception as e:
+        logging.exception(f"Error validating 'X-HOTMART-HOTTOK': {e}")
+        return False
 
 
 def parse_webhook_payload(request):
