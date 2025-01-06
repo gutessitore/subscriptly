@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Rotina Perfeita</title>
-    <link rel="stylesheet" href="static/css/colors.css">
+    <link rel="stylesheet" href="/static/css/colors.css">
     <style>
         body {
             font-family: open-souce, sans-serif;
@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -46,6 +47,12 @@
         a:hover {
             background-color: var(--button-bg-hover);
         }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -62,5 +69,8 @@
             <a href="{% url 'admin:index' %}">Administração</a>
         </div>
     </div>
+    <footer>
+        Versão 1.0.0
+    </footer>
 </body>
 </html>
