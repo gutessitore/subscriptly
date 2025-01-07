@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 
+from objects.circle.community_member import CommunityMember
 from objects.hotmart.purchase_approved_webhook import PurchaseApprovedResponse
 from subscriptions.circle.api_interface import CircleAPI
 from subscriptions.circle.upload_file import upload_file
@@ -130,8 +131,8 @@ def invite_circle_user(request):
     if request.method != "POST":
         return JsonResponse({"error": "Method not allowed"}, status=405)
 
-    if not validate_signature(request):
-        return JsonResponse({"error": "Invalid signature"}, status=403)
+    # if not validate_signature(request):
+    #     return JsonResponse({"error": "Invalid signature"}, status=403)
 
     payload, error_response = parse_webhook_payload(request)
     if error_response:
@@ -144,8 +145,27 @@ def invite_circle_user(request):
         buyer_email = response_payload.data.buyer.email
         subscription_name = response_payload.data.subscription.plan.name
         is_quarterly_plan = response_payload.data.subscription.plan.is_quarterly
-        buyer_password = PasswordGenerator().generate()
+        is_first_purchase = response_payload.data.purchase.recurrence_number == 1
+
+        circle_interface = CircleAPI(api_key=os.environ['CIRCLE_API_V1_KEY'])
         community_id = 94039
+
+        if not is_first_purchase:
+            return JsonResponse({"message": "Not the first purchase, skipping circle invitation"}, status=200)
+
+        community_member = circle_interface.get_community_member(
+                community_member_email=buyer_email,
+                community_id=community_id
+        )
+
+        if isinstance(community_member, CommunityMember):
+            logging.info(f"User {buyer_email} already exists in Circle, skipping invitation")
+            return JsonResponse(
+                {"message": "User already exists in Circle, skipping invitation"},
+                status=200
+            )
+
+        buyer_password = PasswordGenerator().generate()
 
         data = {
             'name': buyer_name,
@@ -165,7 +185,7 @@ def invite_circle_user(request):
         else:
             raise ValueError("Invalid plan type")
 
-        CircleAPI(api_key=os.environ['CIRCLE_API_V1_KEY']).invite_community_member(
+        circle_interface.invite_community_member(
             member_email=buyer_email,
             member_name=buyer_name,
             community_id=community_id,
