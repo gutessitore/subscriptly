@@ -8,7 +8,7 @@ class CircleUser(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     member_since = models.DateTimeField(null=True, blank=True)
-    active_status = models.CharField(max_length=5)
+    active_status = models.CharField(max_length=20)
     tags = models.JSONField()  # Armazena as etiquetas como uma lista de strings
     location = models.CharField(max_length=100, null=True, blank=True)
     headline = models.CharField(max_length=200, null=True, blank=True)
@@ -24,6 +24,7 @@ class CircleUser(models.Model):
     num_likes_received = models.IntegerField(default=0)
     image_url = models.URLField(max_length=1000, null=True, blank=True)
     last_active = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.email}"
@@ -53,6 +54,7 @@ class HotmartSubscription(models.Model):
     subscriber_email = models.EmailField()
     date_next_charge = models.DateTimeField()
     transaction = models.CharField(max_length=100)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.subscriber_name} - {self.product_name}"
@@ -67,7 +69,7 @@ class NonSubscribedCircleUser(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     profile_url = models.URLField(max_length=200, null=True, blank=True)
-    active_status = models.CharField(max_length=5)
+    active_status = models.CharField(max_length=20)
     member_since = models.DateTimeField(null=True, blank=True)
     hotmart_search_link = models.URLField(max_length=500, null=True, blank=True)
 
