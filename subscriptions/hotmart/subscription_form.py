@@ -18,5 +18,5 @@ class HotmartSubscriptionForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=True,
         label="Subscription Status",
-        initial=['ACTIVE', 'CANCELLED_BY_CUSTOMER', 'CANCELLED_BY_SELLER', 'CANCELLED_BY_ADMIN']
+        initial=[choice for choice, _ in STATUS_CHOICES]
     )
