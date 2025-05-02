@@ -108,6 +108,8 @@ def extract_subscriptions_view(request):
                 subscriptions = api.get_subscriptions(statuses)
 
                 for sub in subscriptions:
+                    if not sub.get('date_next_charge'):
+                        continue
                     # Usar update_or_create para criar ou atualizar os dados com base no subscriber_code
                     HotmartSubscription.objects.update_or_create(
                         subscriber_code=sub['subscriber_code'],  # Chave única
@@ -130,6 +132,7 @@ def extract_subscriptions_view(request):
                             'subscriber_email': sub['subscriber']['email'],
                             'date_next_charge': convert_timestamp_to_datetime(sub['date_next_charge']),
                             'transaction': sub['transaction'],
+                            'updated_at': make_aware(datetime.now())
                         }
                     )
 
