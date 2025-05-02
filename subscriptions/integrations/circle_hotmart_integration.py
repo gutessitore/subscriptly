@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
+
+from django.db.models.expressions import OuterRef, Exists
+
 from subscriptions.models import CircleUser, HotmartSubscription, NonSubscribedCircleUser
 
 
 def get_filtered_circle_users(hotmart_emails, diversity_emails, tags_to_exclude):
     circle_users = (
         CircleUser.objects
-        .exclude(email__in=hotmart_emails)
         .exclude(email__in=diversity_emails)
+        .filter(email__in=hotmart_emails)
     )
 
     return [
@@ -60,6 +63,28 @@ def update_non_subscribed_users():
 
     tags_to_exclude = ['Equipe do Clube', 'Embaixadora']
 
-    hotmart_emails = HotmartSubscription.objects.values_list('subscriber_email', flat=True)
-    circle_users = get_filtered_circle_users(hotmart_emails, emails_diversity_program,tags_to_exclude)
-    populate_non_subscribed_users(circle_users)
+    active_subquery = HotmartSubscription.objects.filter(
+        subscriber_email=OuterRef('subscriber_email'),
+        status='ACTIVE'
+    )
+
+    hotmart_subscriptions_in_alert = (
+        HotmartSubscription
+        .objects
+        .filter(
+            status__in=[
+                'INACTIVE', 'DELAYED',
+                'CANCELLED_BY_CUSTOMER',
+                'CANCELLED_BY_SELLER',
+                'CANCELLED_BY_ADMIN'
+            ],
+            # date_next_charge__lte=datetime.now()
+            # Exclude date_next_charge__lte lte today - 30 days
+            date_next_charge__lte=datetime.now() - timedelta(days=90)
+        )
+        .exclude(Exists(active_subquery))
+    )
+    hotmart_subscriptions_in_alert_emails = hotmart_subscriptions_in_alert.values_list('subscriber_email', flat=True)
+
+    circle_users_in_alert = get_filtered_circle_users(hotmart_subscriptions_in_alert_emails, emails_diversity_program, tags_to_exclude)
+    populate_non_subscribed_users(circle_users_in_alert)

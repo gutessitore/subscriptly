@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrair Membros da Comunidade Circle</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 50px auto;
+            max-width: 600px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Extrair Membros da Comunidade Circle</h1>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form method="post" id="extract-form">
+            {% csrf_token %}
+            <button type="submit" id="submit-btn">Iniciar Extração</button>
+        </form>
+        <div class="loading" id="loading-message">
+            <p>Aguarde... Extraindo membros da comunidade.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('extract-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const loadingMessage = document.getElementById('loading-message');
+
+        form.addEventListener('submit', () => {
+            // Oculta o botão e exibe a mensagem de carregamento
+            submitBtn.style.display = 'none';
+            loadingMessage.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

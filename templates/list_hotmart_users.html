@@ -182,6 +182,7 @@
                         <th onclick="sortTable(16)">Email do Assinante</th>
                         <th onclick="sortTable(17)">Data da Próxima Cobrança</th>
                         <th onclick="sortTable(18)">Transação</th>
+                        <th onclick="sortTable(19)">Ultima Atualização</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -206,6 +207,7 @@
                         <td>{{ subscription.subscriber_email }}</td>
                         <td>{{ subscription.date_next_charge|date:"Y-m-d H:i" }}</td>
                         <td>{{ subscription.transaction }}</td>
+                        <td>{{ subscription.updated_at|date:"Y-m-d H:i" }}</td>
                     </tr>
                     {% empty %}
                     <tr>

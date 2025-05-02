@@ -10,8 +10,11 @@ urlpatterns = [
     path("home", views.home_view, name="home"),
     path("circle", views.circle_user_list_view, name="circle_user_list"),
     path("hotmart/extract", views.extract_hotmart_data, name="extract_hotmart_data"),
+    path('circle/extract', views.extract_circle_members, name='extract_circle_members'),
     path("hotmart", views.list_hotmart_users_view, name="list_hotmart_users"),
     path("compare", views.list_non_subscribed_circle_users, name="compare_users"),
+    path('remove_member_from_community', views.remove_member_from_community, name='remove_member_from_community'),
     path('export-users/', export_users_to_excel, name='export_users_to_excel'),
     path('circle/invite', views.invite_circle_user, name='invite_circle_user'),
+    path('clear-data/', views.clear_data, name='clear_data')
 ]

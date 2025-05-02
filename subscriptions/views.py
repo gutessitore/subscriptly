@@ -4,12 +4,13 @@ import json
 import logging
 import os
 
+from tqdm import tqdm
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -28,6 +29,7 @@ from subscriptions.utils.password_gen import PasswordGenerator
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+COMMUNITY_ID = 94039
 
 def login_view(request):
     if request.method == 'POST':
@@ -84,6 +86,7 @@ def extract_hotmart_data(request):
 
 @login_required
 def list_non_subscribed_circle_users(request):
+    NonSubscribedCircleUser.objects.all().delete()
     update_non_subscribed_users()
     users = NonSubscribedCircleUser.objects.all()
     return render(request, 'compare_users.html', {'users': users})
@@ -148,14 +151,13 @@ def invite_circle_user(request):
         is_first_purchase = response_payload.data.purchase.recurrence_number == 1
 
         circle_interface = CircleAPI(api_key=os.environ['CIRCLE_API_V1_KEY'])
-        community_id = 94039
 
         if not is_first_purchase:
             return JsonResponse({"message": "Not the first purchase, skipping circle invitation"}, status=200)
 
         community_member = circle_interface.get_community_member(
                 community_member_email=buyer_email,
-                community_id=community_id
+                community_id=COMMUNITY_ID
         )
 
         if isinstance(community_member, CommunityMember):
@@ -188,7 +190,7 @@ def invite_circle_user(request):
         circle_interface.invite_community_member(
             member_email=buyer_email,
             member_name=buyer_name,
-            community_id=community_id,
+            community_id=COMMUNITY_ID,
             password=buyer_password,
             member_tag_ids=member_tag_ids,
             space_ids=space_ids
@@ -226,3 +228,62 @@ def invite_circle_user(request):
     except Exception as e:
         logging.error(f"Erro ao processar webhook: {str(e)}")
         return JsonResponse({"error": "Internal server error"}, status=500)
+
+
+@login_required
+def extract_circle_members(request):
+    if request.method == 'POST':
+        api_key = os.environ.get('CIRCLE_API_V1_KEY')
+        circle_api = CircleAPI(api_key)
+
+        try:
+            members = circle_api.fetch_community_members()
+            circle_api.process_and_save_community_members(members)
+            return redirect('success')  # Redirecione para uma página de sucesso
+        except Exception as e:
+            return render(request, 'extract_circle_members.html', {
+                'error': f"Erro ao processar membros da comunidade: {e}"
+            })
+    else:
+        # Apenas renderiza a página com o formulário para extração
+        return render(request, 'extract_circle_members.html')
+
+
+@login_required
+def revoke_non_subscribers_from_spaces(request):
+    circle_api = CircleAPI(api_key=os.environ['CIRCLE_API_V1_KEY'])
+    non_subscribers = NonSubscribedCircleUser.objects.all()
+    non_subscribers_emails = [user.email for user in non_subscribers]
+
+    for email in tqdm(non_subscribers_emails):
+        try:
+            response = circle_api.remove_member_from_spaces(member_email=email, community_id=COMMUNITY_ID)
+        except Exception as e:
+            logging.error(f"Erro ao remover membro {email} dos espaços: {e}")
+
+
+    return redirect('success')
+
+
+@login_required
+def clear_data(request):
+    # Apaga os registros de cada modelo
+    CircleUser.objects.all().delete()
+    HotmartSubscription.objects.all().delete()
+    NonSubscribedCircleUser.objects.all().delete()
+
+    return HttpResponse("Dados limpos com sucesso!")
+
+
+def remove_member_from_community(request):
+    circle_api = CircleAPI(api_key=os.environ['CIRCLE_API_V1_KEY'])
+    non_subscribers = NonSubscribedCircleUser.objects.all()
+    non_subscribers_emails = [user.email for user in non_subscribers]
+
+    for email in tqdm(non_subscribers_emails):
+        try:
+            response = circle_api.remove_member_from_community(member_email=email, community_id=COMMUNITY_ID)
+        except Exception as e:
+            logging.error(f"Erro ao remover membro {email} dos espaços: {e}")
+
+    return redirect('success')
