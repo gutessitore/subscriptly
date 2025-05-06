@@ -1,20 +1,20 @@
-import hashlib
-import hmac
+import datetime
 import json
 import logging
 import os
 
-from tqdm import tqdm
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http.response import JsonResponse, HttpResponse
+from django.http.response import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from tqdm import tqdm
 
 from objects.circle.community_member import CommunityMember
 from objects.hotmart.purchase_approved_webhook import PurchaseApprovedResponse
@@ -287,3 +287,96 @@ def remove_member_from_community(request):
             logging.error(f"Erro ao remover membro {email} dos espaços: {e}")
 
     return redirect('success')
+
+
+class TaskRunnerView(View):
+    def post(self, request):
+        # Verificar se a requisição é do Cloud Scheduler
+        if not self._is_valid_request(request):
+            return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=401)
+
+        try:
+            logging.info("Starting scheduled tasks execution")
+
+            # Criar um request falso com usuário anônimo para as views existentes
+            fake_request = self._create_fake_request()
+
+            # 1. Extrair dados da Hotmart
+            logging.info("Executing extract_hotmart_data")
+            hotmart_response = extract_hotmart_data(fake_request)
+            if not isinstance(hotmart_response, HttpResponseRedirect):
+                logging.error("Hotmart data extraction failed")
+                raise Exception("Failed to extract Hotmart data")
+            if hotmart_response.url != '/subscriptions/success':
+                logging.error("Hotmart data extraction did not redirect to success page")
+                raise Exception("Hotmart data extraction did not redirect to success page")
+
+            # 2. Extrair membros do Circle
+            logging.info("Executing extract_circle_members")
+            circle_response = extract_circle_members(fake_request)
+            if not isinstance(circle_response, HttpResponseRedirect):
+                logging.error("Circle members extraction failed")
+                raise Exception("Failed to extract Circle members")
+            if circle_response.url != '/subscriptions/success':
+                logging.error("Circle members extraction did not redirect to success page")
+                raise Exception("Circle members extraction did not redirect to success page")
+
+            # 3. Remover membros da comunidade
+            logging.info("Executing remove_member_from_community")
+            remove_response = remove_member_from_community(fake_request)
+            if not isinstance(remove_response, HttpResponseRedirect):
+                logging.error("Member removal failed")
+                raise Exception("Failed to remove members from community")
+            if remove_response.url != '/subscriptions/success':
+                logging.error("Member removal did not redirect to success page")
+                raise Exception("Member removal did not redirect to success page")
+
+            logging.info("All scheduled tasks completed successfully")
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Tasks executed successfully',
+                'timestamp': datetime.datetime.now().isoformat()
+            })
+
+        except Exception as e:
+            logging.error(f"Error in scheduled tasks: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e),
+                'timestamp': datetime.datetime.now().isoformat()
+            }, status=500)
+
+    def _is_valid_request(self, request):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return False
+        expected_token = settings.SCHEDULER_TOKEN
+        return auth_header == f'Bearer {expected_token}'
+
+    def _create_fake_request(self):
+        """Cria um request falso com um usuário admin ou superuser"""
+        from django.test import RequestFactory
+        from django.contrib.auth.models import User
+
+        factory = RequestFactory()
+
+        form_data = {
+            'statuses': [
+                'ACTIVE', 'INACTIVE', 'DELAYED', 'CANCELLED_BY_CUSTOMER',
+                'CANCELLED_BY_SELLER', 'CANCELLED_BY_ADMIN', 'STARTED', 'OVERDUE'
+            ]
+        }
+        request = factory.post('/fake-path/', data=form_data)
+
+        # Obter um usuário admin/superuser ou criar um se não existir
+        admin_user = User.objects.filter(is_superuser=True).first()
+        if not admin_user:
+            # Crie um superuser se não existir nenhum
+            # (isso deve ser feito apenas em desenvolvimento)
+            admin_user = User.objects.create_superuser(
+                username='admin_task_runner',
+                password='senha_do_admin'
+            )
+
+        request.user = admin_user
+        return request

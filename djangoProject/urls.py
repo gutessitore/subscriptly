@@ -16,13 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
 from subscriptions import views
+from django.views.decorators.csrf import csrf_exempt
+from subscriptions.views import TaskRunnerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('subscriptions/', include('subscriptions.urls')),
     path("", views.index, name="index"),
     path('accounts/login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout')
+    path('logout/', views.logout_view, name='logout'),
+    path('tasks/run-scheduled-tasks/', csrf_exempt(TaskRunnerView.as_view()), name='run-scheduled-tasks')
 ]

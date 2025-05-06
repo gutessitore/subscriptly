@@ -141,3 +141,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CLIENT_ID = config('CLIENT_ID')
 CLIENT_SECRET = config('CLIENT_SECRET')
 BASIC_AUTH = config('BASIC_AUTH')
+SCHEDULER_TOKEN = config('SCHEDULER_TOKEN')
